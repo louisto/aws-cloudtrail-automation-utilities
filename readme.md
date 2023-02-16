@@ -1,13 +1,16 @@
 # AWS CloudTrail Setup Script
 
+Author: Louis To
+LinkedIn: https://www.linkedin.com/in/louisto/
+
 ## Overview
 
 This script was developed to help organizations set up CloudTrail in each member account and forward log events to a central Logging account. The script iterates through all AWS Organizations member accounts to create an account CloudTrail trail for management actions. Alternatively, a config file can be used to add CloudTrail trails for specific accounts rather than for all accounts in the organization.
 
 The following features are included in this script:
 
-* Automatically creates CloudTrail trails in each account (if not already created)
-* Configures CloudTrail trails to log management events and store them in an S3 bucket
+* Automatically creates CloudTrail trails in each member account of an Organization
+* Configures CloudTrail trails to log management events and store them in a central S3 bucket
 * Configures an S3 bucket policy to allow CloudTrail to write logs to the specified bucket
 * Can use a configuration file to target specific accounts in the organization
 
