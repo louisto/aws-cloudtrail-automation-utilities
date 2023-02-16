@@ -18,8 +18,8 @@ The following features are included in this script:
 
 ## Usage
 
-1. Clone this repository: `git clone https://github.com/<your_username>/<your_repository>`
-2. Navigate to the project directory: `cd <your_repository>`
+1. Clone this repository: `git clone https://github.com/louisto/aws-utils`
+2. Navigate to the project directory: `cd aws-utils`
 3. Install the required Python packages: `pip install -r requirements.txt`
 4. Set the following environment variables:
 

@@ -244,7 +244,7 @@ bucket_policy_json = set_logging_account_s3_bucket_default_policy(logging_accoun
 # Add new resources and permissions for each account in the organization if not already in the bucket policy
 update_bucket_policy(list_of_accounts, cloudtrail_bucket_name, bucket_policy_json, logging_account_s3_client)
 
-#Start with the management account client
+# Start with the management account client
 cloudtrail_client = boto3.client('cloudtrail')
 sts_client = boto3.client('sts')
     
@@ -263,7 +263,7 @@ for account in list_of_accounts:
             aws_secret_access_key=temp_credentials['SecretAccessKey'],
             aws_session_token=temp_credentials['SessionToken'])    
     
-    #Create cloudtrail in the account if it does not already exist
+    # Create cloudtrail in the account if it does not already exist
     create_account_cloudtrail(cloudtrail_client, account_trail_name, cloudtrail_bucket_name)
 
     
