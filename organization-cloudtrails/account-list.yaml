@@ -1,0 +1,5 @@
+#Accounts found in this yaml file will have a CloudTrail trail added
+accounts:
+  - Id: 123456789012
+  - Id: 234567890123
+  - Id: 345678901234
