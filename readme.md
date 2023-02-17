@@ -40,4 +40,4 @@ Please feel free to reach out to me on [LinkedIn](https://www.linkedin.com/in/lo
 
 ## License
 
-This project is licensed under the [MIT License](https://github.com/<your_username>/<your_repository>/blob/main/LICENSE).
+This project is licensed under the [MIT License](https://github.com/louisto/aws-utils/blob/main/LICENSE).
