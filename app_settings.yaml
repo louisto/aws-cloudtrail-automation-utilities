@@ -1,0 +1,6 @@
+LocalProfile: 'default'
+ManagementAccountId: '123456789123'
+LoggingAccountId: '234567891234'
+OrganizationAccountAccessRole: OrganizationAccountAccessRole
+CloudTrailBucketName: aws-cloudtrail-logs-234567891234-1111111c
+AccountCloudTrailName: management-events

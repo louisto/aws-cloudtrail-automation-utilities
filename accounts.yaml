@@ -1,0 +1,10 @@
+accounts:
+- Id: '123456789123'
+  Name: management-account
+  Status: ACTIVE
+- Id: '234567891234'
+  Name: Security-Logs
+  Status: ACTIVE
+- Id: '345678912345'
+  Name: Dev
+  Status: ACTIVE
