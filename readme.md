@@ -5,14 +5,17 @@ LinkedIn: https://www.linkedin.com/in/louisto/
 
 ## Overview
 
-This script was developed to help organizations set up CloudTrail in each member account and forward log events to a central Logging account. The script iterates through all AWS Organizations member accounts to create an account CloudTrail trail for management actions. Alternatively, a config file can be used to add CloudTrail trails for specific accounts rather than for all accounts in the organization.
+This utility suite was developed to help create a CloudTrail in each member account in an Organization and forward log events to a central logging account bucket. 
 
-The following features are included in this script:
+create_accounts_list.py
+Creates accounts.yaml, which is a list of accounts from the Organization. Options for the account list are:
+* All Accounts
+* Active Accounts Only
+* Suspended Accounts Only
 
-* Automatically creates CloudTrail trails in each member account of an Organization
-* Configures CloudTrail trails to log management events and store them in a central S3 bucket
-* Configures an S3 bucket policy to allow CloudTrail to write logs to the specified bucket
-* Can use a configuration file to target specific accounts in the organization
+create_cloudtrails.py
+* Automatically create a CloudTrail in each account in the accounts.yaml file. 
+* Each CloudTrail will write logs to the central logging account bucket, which is specified in the app_settings.yaml file. 
 
 ## Limitations/Requirements
 
@@ -24,13 +27,10 @@ The following features are included in this script:
 1. Clone this repository: `git clone https://github.com/louisto/aws-utils`
 2. Navigate to the project directory: `cd aws-utils`
 3. Install the required Python packages: `pip install -r requirements.txt`
-4. Set the following environment variables:
-
-    * AWS_ACCESS_KEY_ID
-    * AWS_SECRET_ACCESS_KEY
-    * AWS_DEFAULT_REGION
-
-5. Run the script: `python3 make-cloudtrail.py`
+4. Use aws configure to create a profile
+5. Update app-settings.yaml to reflect your organization requirements
+6. Execute create_accounts_list.py to generate a list of accounts
+7. Execute create_cloudtrails.py to create the cloudtrails in each account
 
 ## Help/Questions?
 
