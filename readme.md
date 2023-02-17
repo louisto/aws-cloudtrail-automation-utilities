@@ -5,10 +5,11 @@ LinkedIn: https://www.linkedin.com/in/louisto/
 
 ## Overview
 
-This utility suite was developed to help create a CloudTrail in each member account in an Organization and forward log events to a central logging account bucket. 
+This utility suite was developed to help create a CloudTrail in each member account in an Organization. 
 
 create_accounts_list.py
-Creates accounts.yaml, which is a list of accounts from the Organization. Options for the account list are:
+
+* Creates accounts.yaml, which is a list of accounts from the Organization. Options for the account list are:
 * All Accounts
 * Active Accounts Only
 * Suspended Accounts Only
