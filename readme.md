@@ -9,10 +9,11 @@ This utility suite was developed to help create a CloudTrail in each member acco
 
 create_accounts_list.py
 
-* Creates accounts.yaml, which is a list of accounts from the Organization. Options for the account list are:
-* All Accounts
-* Active Accounts Only
-* Suspended Accounts Only
+* Creates accounts.yaml, which is a list of accounts from the Organization. 
+* Options for the account list are:
+    * All Accounts
+    * Active Accounts Only
+    * Suspended Accounts Only
 
 create_cloudtrails.py
 * Automatically create a CloudTrail in each account in the accounts.yaml file. 
