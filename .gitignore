@@ -1,7 +1,3 @@
-#Settings
-/accounts.yaml
-/app_settings.yaml
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
