@@ -5,8 +5,6 @@ import json
 class CloudTrailHelper:
     def __init__(self, config, session):
         self.config = config
-        self.print_org_config_file()
-
         self.s3_client = session.client('s3')
         self.sts_client = session.client('sts')
         self.cloudtrail_client = session.client('cloudtrail')
@@ -25,9 +23,6 @@ class CloudTrailHelper:
             aws_access_key_id=temp_credentials['AccessKeyId'],
             aws_secret_access_key=temp_credentials['SecretAccessKey'],
             aws_session_token=temp_credentials['SessionToken'])
-
-    def print_org_config_file(self):
-        print(self.config)
 
     def get_cloudtrail_bucket_policy(self):
 
