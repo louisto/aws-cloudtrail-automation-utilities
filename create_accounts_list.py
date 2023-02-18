@@ -23,22 +23,17 @@
     
 """
 
-import yaml
-import boto3
 from utils.organization import OrganizationHelper
+from utils.session import SessionHelper
 
-#Get the app config
-app_settings = 'app_settings.yaml'
-config = {}
-with open(app_settings, "r") as file:
-    config = yaml.safe_load(file)
+# Get an aws client session and config settings from app_settings.yaml
+session_helper = SessionHelper('app_settings.yaml')
+session, config = session_helper.get_session_and_config()
 
-session = boto3.Session(profile_name=config['LocalProfile'])
-
-#Instantiate helpers
+# Instantiate helpers
 org_helper = OrganizationHelper(session)
 
-#Get a list of accounts from the organization
+# Get a list of accounts from the organization
 accounts_output_file_name = 'accounts.yaml'
 
 print("Management Account: {config['ManagementAccountId']}")

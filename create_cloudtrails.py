@@ -23,52 +23,44 @@
 """
 
 import yaml
-import boto3
 from utils.cloudtrail import CloudTrailHelper
 from utils.organization import OrganizationHelper
+from utils.session import SessionHelper
 
-#Get the app config
-app_settings = 'app_settings.yaml'
-config = {}
-with open(app_settings, "r") as file:
-    config = yaml.safe_load(file)
+# Get an aws client session and config settings from app_settings.yaml
+session_helper = SessionHelper('app_settings.yaml')
+session, config = session_helper.get_session_and_config()
 
-session = boto3.Session(profile_name=config['LocalProfile'])
-
-#Instantiate helpers
+# Instantiate helpers
 organization_helper = OrganizationHelper(session)
 cloudtrail_helper = CloudTrailHelper(config, session)
 
-#Get a list of accounts from the organization
+# Get a list of accounts from the organization
 accounts_output_file_name = 'accounts.yaml'
 accounts = []
 with open(accounts_output_file_name, "r") as file:
     accounts = yaml.safe_load(file)['accounts']
 
-#Filter out accounts in SUSPENDED state
+# Filter out accounts in SUSPENDED state
 active_accounts = [account for account in accounts if account['Status'] == 'ACTIVE']
-
-
 
 print(f"Executing this script will...")
 print(f"""
-    Create a CloudTrail named {config['AccountCloudTrailName']} in each Account in accounts.yaml
+Create a CloudTrail named {config['AccountCloudTrailName']} in each Account from accounts.yaml
 
-    Each Account CloudTrail will write logs to:
-        S3 Bucket: {config['CloudTrailBucketName']}
-        Account: {config['LoggingAccountId']}
-
-    In each account listed in accounts.yaml.
+Each Account CloudTrail will write logs to:
+    S3 Bucket: {config['CloudTrailBucketName']}
+    Account: {config['LoggingAccountId']}
     
-    The list of accounts is as follows:
 """)
 print("List of Accounts:")
 [print(account["Id"]) for account in active_accounts]
+print("")
+
 selection : str = input("Confirm Create CloudTrails in each account [Y/n]: ")
 
 if selection == 'Y':
-    #Update bucket policy to allow write from CloudTrail in each account
-    cloudtrail_helper.update_cloudtrail_bucket_policy(active_accounts)
-
-    #Add CloudTrail to each account
+    # Add CloudTrail to each account, Add Logging Account Bucket Permissions
     cloudtrail_helper.add_cloudtrail_to_accounts(active_accounts)
+else:
+    print("Invalid selection, operation cancelled.")

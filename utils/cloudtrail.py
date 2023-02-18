@@ -1,5 +1,4 @@
 import boto3
-import yaml
 import json
 
 class CloudTrailHelper:
@@ -8,23 +7,28 @@ class CloudTrailHelper:
         self.s3_client = session.client('s3')
         self.sts_client = session.client('sts')
         self.cloudtrail_client = session.client('cloudtrail')
-        self.logging_account_s3_client = self.get_logging_account_s3_client()
+        self.logging_account_s3_client = self._get_logging_account_s3_client()
 
-    def get_logging_account_s3_client(self):
-    
-        """Returns an S3 client object authorized to access the S3 bucket for logging AWS CloudTrail events in a logging account."""
+    def _get_assumed_role_client(self, service, role_arn):
+        assumed_role = self.sts_client.assume_role(RoleArn=role_arn, RoleSessionName='assume-role-session')
+                
+        # Get temporary credentials for the assumed role
+        temp_credentials = assumed_role['Credentials']
 
-        logging_account_role_arn = f'arn:aws:iam::{self.config["LoggingAccountId"]}:role/{self.config["OrganizationAccountAccessRole"]}'
-        logging_account_assumed_role = self.sts_client.assume_role(RoleArn=logging_account_role_arn, RoleSessionName='assume-role-session')
-        temp_credentials = logging_account_assumed_role['Credentials']
-
-        # Return an S3 client with the temporary credentials
-        return boto3.client('s3',
+        # Return a client with the temporary credentials
+        return boto3.client(service,
             aws_access_key_id=temp_credentials['AccessKeyId'],
             aws_secret_access_key=temp_credentials['SecretAccessKey'],
             aws_session_token=temp_credentials['SessionToken'])
 
-    def get_cloudtrail_bucket_policy(self):
+    def _get_logging_account_s3_client(self):
+    
+        """Returns an S3 client object for the Logging Account."""
+
+        logging_account_role_arn = f'arn:aws:iam::{self.config["LoggingAccountId"]}:role/{self.config["OrganizationAccountAccessRole"]}'
+        return self._get_assumed_role_client('s3', logging_account_role_arn)
+
+    def _get_cloudtrail_bucket_policy(self):
 
         """Returns cloudtrail bucket policy, sets a default if the policy is missing."""
 
@@ -68,8 +72,8 @@ class CloudTrailHelper:
 
         return policy
     
-    def update_cloudtrail_bucket_policy(self, accounts):
-        bucket_policy = self.get_cloudtrail_bucket_policy()
+    def _update_cloudtrail_bucket_policy(self, accounts):
+        bucket_policy = self._get_cloudtrail_bucket_policy()
         
         for account in accounts:
             account_id = str(account['Id'])
@@ -100,6 +104,7 @@ class CloudTrailHelper:
                     f"arn:aws:s3:::{self.config['CloudTrailBucketName']}"
                 ]
             }
+
             # Check if the account statements are already in the policy
             existing_statements = [s for s in bucket_policy['Statement'] if s['Sid'].startswith('CloudTrail_')]
             existing_put_object_sids = [s['Sid'] for s in existing_statements if account_id in s['Sid'] and 'PutObject' in s['Sid']]
@@ -118,7 +123,7 @@ class CloudTrailHelper:
         # Update the bucket policy with the modified JSON
         self.logging_account_s3_client.put_bucket_policy(Bucket=self.config['CloudTrailBucketName'], Policy=json.dumps(bucket_policy))
 
-    def create_account_cloudtrail(self, cloudtrail_client):
+    def _create_account_cloudtrail(self, cloudtrail_client):
     
         """Create a cloudtrail for the given account client and target bucket."""
 
@@ -140,6 +145,7 @@ class CloudTrailHelper:
             # Get the ARN of the new trail
             trail_arn = response['TrailARN']
             print(f"CloudTrail trail '{self.config['AccountCloudTrailName']}' created with ARN '{trail_arn}'")
+
         # Start logging events to the trail
         cloudtrail_client.start_logging(Name=self.config['AccountCloudTrailName'])
 
@@ -149,24 +155,18 @@ class CloudTrailHelper:
 
 
     def add_cloudtrail_to_accounts(self, accounts):
-        #Create a CloudTrail for the MGMT account, if it does not already exist.
-        self.create_account_cloudtrail(self.cloudtrail_client)
+        # Update bucket policy to allow write from CloudTrail in each account
+        self._update_cloudtrail_bucket_policy(accounts)
+
+        # Create a CloudTrail for the Organization Management account, if it does not already exist.
+        self._create_account_cloudtrail(self.cloudtrail_client)
 
         for account in accounts:
             if account['Id'] != self.config["ManagementAccountId"]:
                 role_arn = f'arn:aws:iam::{account["Id"]}:role/{self.config["OrganizationAccountAccessRole"]}'  
-                assumed_role = self.sts_client.assume_role(RoleArn=role_arn, RoleSessionName='assume-role-session')
+                cloudtrail_client = self._get_assumed_role_client("cloudtrail", role_arn)
                 
-                # Get temporary credentials for the assumed role
-                temp_credentials = assumed_role['Credentials']
-
-                # Create a CloudTrail client with the temporary credentials
-                cloudtrail_client = boto3.client('cloudtrail',
-                    aws_access_key_id=temp_credentials['AccessKeyId'],
-                    aws_secret_access_key=temp_credentials['SecretAccessKey'],
-                    aws_session_token=temp_credentials['SessionToken'])
-                
-                self.create_account_cloudtrail(cloudtrail_client)
+                self._create_account_cloudtrail(cloudtrail_client)
             
     
             
