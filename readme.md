@@ -24,7 +24,7 @@ The app_settings.yaml file is used to configure account settings for the script.
     * Name of the CloudTrail to be created in each member account
 
 ###### Step 2: Create accounts.yaml
-Use **create_accounts_list.py** to create a list of accounts. This script will read from your Organization Management account and output the list of
+Use create_accounts_list.py to create a list of accounts. This script will read from your Organization Management account and output the list of
 Organization Member Accounts to a accounts.yaml
 
 * Options:
@@ -33,7 +33,7 @@ Organization Member Accounts to a accounts.yaml
     * Suspended Accounts Only
 
 ###### Step 3: Create CloudTrails
-Use **create_cloudtrails.py** to create a CloudTrail for each account listed in accounts.yaml. 
+Use create_cloudtrails.py to create a CloudTrail for each account listed in accounts.yaml. 
 
 This script will add each member account to the central CloudTrail Logging Bucket policy and then create a CloudTrail for each account.
 
