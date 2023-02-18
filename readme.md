@@ -1,6 +1,7 @@
 # AWS CloudTrail Setup Script
 
 Author: Louis To
+
 LinkedIn: https://www.linkedin.com/in/louisto/
 
 ## Overview
@@ -25,7 +26,7 @@ The **app_settings.yaml** file is used to configure account settings for the scr
 
 ###### Step 2: Create accounts.yaml
 Use **create_accounts_list.py** to create a list of accounts. This script will read from your Organization Management account and output the list of
-Organization Member Accounts to a accounts.yaml
+Organization Member Accounts to accounts.yaml
 
 * Options:
     * All Accounts
